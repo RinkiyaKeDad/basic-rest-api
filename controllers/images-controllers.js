@@ -1,5 +1,6 @@
 const Image = require('../models/image');
 const HttpError = require('../models/http-error');
+var { promisify } = require('util');
 
 const getImages = async (req, res, next) => {
   let images;
@@ -44,12 +45,27 @@ const makeImage = async (req, res, next) => {
     );
     return next(error);
   }
+  /*
+  var sizeOf = promisify(require('image-size'));
+  (async () => {
+    try {
+      const dimensions = await sizeOf(createdImage.url);
+      console.log(dimensions.width, dimensions.height);
+    } catch (err) {
+      console.error(err);
+    }
+  })().then(c => console.log(c));
+*/
 
   res.status(201).json({
     id: createdImage.id,
     url: createdImage.url,
     name: createdImage.name,
     type: createdImage.type,
+    metaData: {
+      //size: dimensions,
+      extType: createdImage.url.split('.').pop(),
+    },
   });
 };
 
